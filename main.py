@@ -1,3 +1,9 @@
+def log_operations(func):
+    def wrapper(self, *args, **kwargs):
+        print(f'Выполняется: {func.__name__}')
+        result = func(self, *args, **kwargs)
+        print(f'Завершена: {func.__name__}')
+    return wrapper
 class Task:
     def __init__(self, title, description, priority):
         self.title = title
@@ -7,15 +13,17 @@ class Task:
 class TaskManager:
     def __init__(self):
         self.tasks = []
+    @log_operations
     def add_task(self, title, description, priority):
         task = Task(title, description, priority)
         self.tasks.append(task)
         self.save_to_file()
     def list_tasks(self):
-        sorted_tasks = sorted(self.tasks, key=lambda t: t.priority, , reverse=True)
+        sorted_tasks = sorted(self.tasks, key=lambda t: t.priority, reverse=True)
         for i, task in enumerate(sorted_tasks, 1):
             status = "✓" if task.completed else "✗"
             print(f"{i}. [{status}] {task.title} (Приоритет: {task.priority})")
+    @log_operations
     def delete_task(self, task_number):
         if 1 <= task_number <= len(self.tasks):
             removed = self.tasks.pop(task_number - 1)
